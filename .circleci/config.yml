@@ -3,6 +3,7 @@ version: 2.1
 orbs:
   node: circleci/node@5.1.0
 
+# todo arz re-home vault secrets so $ENVIRONMNT is top level for the installation/GCP project/instance
 references:
   repo_path: &repo_path
       /home/circleci/repo
@@ -169,7 +170,7 @@ commands:
           name: Setup gcloud context
           command: |
             set -u
-            readvault.sh secret/pepper/${ENVIRONMENT}/v1/conf .data.gcp.serviceKey | gcloud auth activate-service-account --key-file=-
+            readvault.sh secret/pepper/dev/v1/${ENVIRONMENT}/v1/conf .data.gcp.serviceKey | gcloud auth activate-service-account --key-file=-
             gcloud --quiet config set compute/zone ${GOOGLE_COMPUTE_ZONE}
       - run:
           name: <<parameters.study_key>> generate config files and copy pepperConfig.js
@@ -206,7 +207,7 @@ commands:
           command: |
             set -u
             set +x
-            readvault.sh secret/pepper/${ENVIRONMENT}/v1/conf .data.gcp.serviceKey | \
+            readvault.sh secret/pepper/dev/v1/${ENVIRONMENT}/v1/conf .data.gcp.serviceKey | \
             reportdeploy.sh "$RELEASE_SHEET_ID" '<<parameters.study_key>> Angular client' "$ENVIRONMENT" "$CIRCLE_BUILD_NUM" "$CIRCLE_BUILD_URL"
       - run:
           name: Delete previous versions of service
@@ -398,7 +399,7 @@ commands:
           name: Store build archive
           command: |
             set -u
-            readvault.sh secret/pepper/prod/v1/conf .data.gcp.serviceKey | gcloud auth activate-service-account --key-file=-
+            readvault.sh secret/pepper/dev/v1/conf/${ENVIRONMENT} .data.gcp.serviceKey | gcloud auth activate-service-account --key-file=-
             gsutil cp  ${TAR_PATH} "gs://${BUILDS_BUCKET}/${ANGULAR_PROJECT_NAME}/${TAR_NAME}"
 
   conditionally-launch-build-and-deploy:
@@ -453,7 +454,7 @@ commands:
           command: |
             set -u
             set +e
-            readvault.sh secret/pepper/prod/v1/conf .data.gcp.serviceKey | gcloud auth activate-service-account --key-file=-
+            readvault.sh secret/pepper/dev/v1/${ENVIRONMENT}/conf .data.gcp.serviceKey | gcloud auth activate-service-account --key-file=-
             TAR_FILE_URL_PATTERN="gs://${BUILDS_BUCKET}/${ANGULAR_PROJECT_NAME}/${ANGULAR_PROJECT_NAME}_*_${SHORT_GIT_SHA}.tar.gz"
             echo "Checking for ${TAR_FILE_URL_PATTERN}"
             # For some reason following line generating exit code 1 every time in CircleCI. Use set +e so script can continue
