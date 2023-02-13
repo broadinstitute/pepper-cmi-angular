@@ -1,5 +1,5 @@
 render "docker-compose-study.yaml.ctmpl"
 render "pepperConfig.js.ctmpl"
 copy_file "study-nginx.conf"
-copy_secret_from_path "secret/pepper/#{$env}/#{$version}/#{$study_key}/cert.key"
-copy_secret_from_path "secret/pepper/#{$env}/#{$version}/#{$study_key}/cert.crt"
+copy_secret_from_path "secret/#{$env}/#{$study_key}/cert.key"
+copy_secret_from_path "secret/#{$env}/#{$study_key}/cert.crt"
