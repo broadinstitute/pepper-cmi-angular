@@ -2,7 +2,7 @@
 
 {{ $environment := env "ENVIRONMENT"}}
 {{ $version := env "VERSION"}}
-{{ with secret (printf "secret/pepper/%s/%s/conf" $environment $version) }}
+{{ with secret (printf "secret/%s/conf" $environment ) }}
 
 # login using build account creds and publish the sdk using whatever version is in package.json
 curl -u '{{.Data.artifactoryBuildUsername}}:{{$.Data.artifactoryBuildPassword}}'  https://broadinstitute.jfrog.io/broadinstitute/api/npm/npm-local/auth/ddp > /.npmrc

@@ -17,7 +17,7 @@ handlers:
     upload: dist/(.*\.(css|eot|gz|html|ico|js|map|png|svg|ttf|woff|woff2|jpg|jpeg|gif|png|json|pdf))
     secure: always
 {{if eq $study_guid "atcp"}}
-  {{with secret (printf "secret/pepper/%s/%s/atcp/conf" $environment $version)}}
+  {{with secret (printf "secret/%s/atcp/conf" $environment )}}
     http_headers:
       Access-Control-Allow-Origin: https://{{.Data.auth0.loginDomain}}
   {{end}}

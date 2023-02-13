@@ -7,7 +7,7 @@ var DDP_ENV = {
     auth0SilentRenewUrl: location.origin + '/silentRenew',
     loginLandingUrl: location.origin + '/login-landing',
     doLocalRegistration: false,
-    {{ with secret (printf "secret/pepper/%s/%s/conf" $environment $version) }}
+    {{ with secret (printf "secret/%s/conf" $environment ) }}
     mapsApiKey: "{{.Data.mapsApiKey}}",
     errorReportingApiKey: "{{.Data.errorReportingApiKey}}",
     projectGcpId: "{{.Data.googleProjectId}}",
@@ -43,7 +43,7 @@ var DDP_ENV = {
 {{end}}
 
 {{if eq $study_guid "basil"}}
-    {{with secret (printf "secret/pepper/%s/%s/basil/conf" $environment $version)}}
+    {{with secret (printf "secret/%s/basil/conf" $environment )}}
         DDP_ENV['auth0ClientId'] = "{{.Data.auth0.appClientId}}";
         DDP_ENV['adminClientId'] = "{{.Data.auth0.adminClientId}}";
         DDP_ENV['auth0Domain'] = "{{.Data.auth0.loginDomain}}";
@@ -96,7 +96,7 @@ var DDP_ENV = {
 
     DDP_ENV['adminLoginLandingUrl'] = location.origin + '/admin-login-landing';
 
-    {{with secret (printf "secret/pepper/%s/%s/%s/conf" $environment $version $study)}}
+    {{with secret (printf "secret/%s/%s/conf" $environment  $study)}}
         DDP_ENV['auth0ClientId'] = "{{.Data.auth0.clientId}}";
         DDP_ENV['adminClientId'] = "{{.Data.auth0.adminClientId}}";
     {{end}}
@@ -131,7 +131,7 @@ var DDP_ENV = {
         DDP_ENV['auth0Audience'] = "at-dev.auth0.com";
         DDP_ENV['basePepperUrl'] = "https://pepper-dev.datadonationplatform.org";
     {{else}}
-        {{with secret (printf "secret/pepper/%s/%s/atcp/conf" $environment $version)}}
+        {{with secret (printf "secret/%s/atcp/conf" $environment )}}
             DDP_ENV['recaptchaSiteClientKey'] = "{{.Data.recaptchaSiteClientKey}}",
             DDP_ENV['darUrl'] = "{{.Data.cloudFunctions.darUrl}}"
             DDP_ENV['auth0ClientId'] = "{{.Data.auth0.clientId}}";
@@ -143,7 +143,7 @@ var DDP_ENV = {
 {{end}}
 
 {{if eq $study_guid "testboston"}}
-    {{with secret (printf "secret/pepper/%s/%s/%s/conf" $environment $version $study) }}
+    {{with secret (printf "secret/%s/%s/conf" $environment $study) }}
         DDP_ENV['recaptchaSiteClientKey'] = "{{.Data.recaptchaSiteClientKey}}",
     {{end}}
     {{if eq $environment "dev"}}
@@ -266,7 +266,7 @@ var DDP_ENV = {
         DDP_ENV['basePepperUrl'] = "https://pepper-dev.datadonationplatform.org";
         DDP_ENV['projectGAToken'] = "fixme-not-set";
     {{else}}
-        {{with secret (printf "secret/pepper/%s/%s/rgp/conf" $environment $version)}}
+        {{with secret (printf "secret/%s/rgp/conf" $environment )}}
             DDP_ENV['auth0ClientId'] = "{{.Data.auth0.clientId}}";
             DDP_ENV['auth0Domain'] = "{{.Data.auth0.loginDomain}}";
             DDP_ENV['auth0Audience'] = "{{.Data.auth0.loginDomain}}";
@@ -281,7 +281,7 @@ var DDP_ENV = {
 {{end}}
 
 {{if eq $study_guid "circadia"}}
-    {{with secret (printf "secret/pepper/%s/%s/%s/conf" $environment $version $study) }}
+    {{with secret (printf "secret/%s/%s/conf" $environment $study) }}
         DDP_ENV['sleepLogConnectorUrl'] = "{{.Data.sleepLogConnectorUrl}}",
         DDP_ENV['enrollmentPaused'] = {{.Data.enrollmentPaused}},
     {{end}}
@@ -294,7 +294,7 @@ var DDP_ENV = {
         DDP_ENV['enrollmentPaused'] = false,
     {{end}}
 
-    {{with secret (printf "secret/pepper/%s/%s/circadia/conf" $environment $version)}}
+    {{with secret (printf "secret/%s/circadia/conf" $environment )}}
         DDP_ENV['auth0ClientId'] = "{{.Data.auth0.clientId}}";
         DDP_ENV['auth0Domain'] = "{{.Data.auth0.loginDomain}}";
         DDP_ENV['auth0Audience'] = "{{.Data.auth0.loginDomain}}";
@@ -310,7 +310,7 @@ var DDP_ENV = {
         DDP_ENV['basePepperUrl'] = "http://localhost:5556";
     {{end}}
 
-    {{with secret (printf "secret/pepper/%s/%s/singular/conf" $environment $version)}}
+    {{with secret (printf "secret/%s/singular/conf" $environment )}}
         DDP_ENV['analyticsToken'] = "{{.Data.analyticsToken}}";
         DDP_ENV['auth0ClientId'] = "{{.Data.auth0.clientId}}";
         DDP_ENV['auth0Domain'] = "{{.Data.auth0.loginDomain}}";
@@ -368,7 +368,7 @@ var DDP_ENV = {
 {{end}}
 
 {{if eq $study_guid "brugada"}}
-    {{with secret (printf "secret/pepper/%s/%s/%s/conf" $environment $version $study) }}
+    {{with secret (printf "secret/%s/%s/conf" $environment $study) }}
         DDP_ENV['recaptchaSiteClientKey'] = "{{.Data.recaptchaSiteClientKey}}";
         DDP_ENV['dbName'] = "{{.Data.auth0.dbName}}";
     {{end}}
@@ -380,7 +380,7 @@ var DDP_ENV = {
         DDP_ENV['basePepperUrl'] = "http://localhost:5556";
     {{end}}
 
-    {{with secret (printf "secret/pepper/%s/%s/brugada/conf" $environment $version)}}
+    {{with secret (printf "secret/%s/brugada/conf" $environment )}}
         DDP_ENV['auth0ClientId'] = "{{.Data.auth0.clientId}}";
         DDP_ENV['auth0Domain'] = "{{.Data.auth0.loginDomain}}";
         DDP_ENV['auth0Audience'] = "{{.Data.auth0.loginDomain}}";
@@ -396,7 +396,7 @@ var DDP_ENV = {
         DDP_ENV['basePepperUrl'] = "http://localhost:5556";
     {{end}}
 
-    {{with secret (printf "secret/pepper/%s/%s/fon/conf" $environment $version)}}
+    {{with secret (printf "secret/%s/fon/conf" $environment)}}
         DDP_ENV['auth0ClientId'] = "{{.Data.auth0.clientId}}";
         DDP_ENV['auth0Domain'] = "{{.Data.auth0.loginDomain}}";
         DDP_ENV['auth0Audience'] = "{{.Data.auth0.loginDomain}}";

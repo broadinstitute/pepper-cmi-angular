@@ -1,6 +1,6 @@
 {{ $environment := env "ENVIRONMENT"}}
 {{ $version := env "VERSION"}}
-{{ with secret (printf "secret/pepper/%s/%s/conf" $environment $version) }}
+{{ with secret (printf "secret/%s/conf" $environment ) }}
 
 var DDP_ENV = {
   basePepperUrl: "{{.Data.pepperApiBaseUrl}}",
