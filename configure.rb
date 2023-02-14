@@ -193,12 +193,12 @@ def render_from_path(path, output_file_name = nil)
         "-e", "STUDY_KEY=#{$study_key}",
         "-e", "IMAGE_NAME=#{$image_base}",
         $dsde_toolbox_image_name,
-        "consul-template", "-config=/etc/consul-template/config/config.json", "-vault-retry-attempts=1",
+        "consul-template", "-vault-retry-attempts=0", "-config=/etc/consul-template/config/config.json",
         "-template=#{file_name}:#{output_file_name}",
         "-once"
     ]
   else
-    vault_cmd = ["consul-template", "-config=/etc/consul-template/config/config.json", "-vault-retry-attempts=1",
+    vault_cmd = ["consul-template", "-vault-retry-attempts=0", "-config=/etc/consul-template/config/config.json",
                  "-template=#{file_name}:#{output_file_name}", "-once"]
   end
 
