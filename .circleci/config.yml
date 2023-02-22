@@ -6,11 +6,11 @@ orbs:
 # todo arz re-home vault secrets so $ENVIRONMNT is top level for the installation/GCP project/instance
 references:
   repo_path: &repo_path
-      /home/circleci/pepper-cmi/repo
+      /home/circleci/repo
   ng_workspace_path: &ng_workspace_path
-      /home/circleci/pepper-cmi/repo/ddp-workspace
+      /home/circleci/repo/ddp-workspace
   playwright_path: &playwright_path
-      /home/circleci/pepper-cmi/repo/playwright-e2e
+      /home/circleci/repo/playwright-e2e
   npm_cache_key: &npm_cache_key
     v1-dependency-npm2-{{ checksum "package.json" }}-{{ checksum "package-lock.json" }}
   npm_cache_restore_key: &npm_cache_restore_key
