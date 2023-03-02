@@ -18,7 +18,7 @@ references:
       - *npm_cache_key
   # Note: important that values of guids and keys have matching order!"
   study_keys: &study_keys
-    "basil dsm-ui osteo brain angio mbc testboston mpc prion atcp rarex rgp esc cgc circadia pancan singular brugada lms fon"
+    "dsm-ui osteo brain angio mbc mpc esc cgc pancan lms"
   study_guids: &study_guids
     "basil NA CMI-OSTEO cmi-brain ANGIO cmi-mbc testboston cmi-mpc PRION atcp rarex RGP cmi-esc cgc circadia cmi-pancan singular brugada cmi-lms fon"
 
@@ -101,18 +101,24 @@ commands:
 
             case $DEPLOY_TARGET_ENV in
               dev*)
-                DEPLOY_ENV=dev
+                VAULT_PATH=pepper-cmi/dev
+                ENVIRONMENT=pepper-cmi-dev
                 BUILD_PARAMS=--sourceMap
               ;;
               test)
-                DEPLOY_ENV=test
+                VAULT_PATH=pepper-cmi/dev
+                ENVIRONMENT=pepper-cmi-dev
                 BUILD_PARAMS=--sourceMap
               ;;
               staging)
-                DEPLOY_ENV=staging
+                VAULT_PATH=pepper-cmi/dev
+                ENVIRONMENT=pepper-cmi-dev
+
               ;;
               prod*)
-                DEPLOY_ENV=prod
+                VAULT_PATH=pepper-cmi/prod
+                ENVIRONMENT=pepper-cmi-prod
+
               ;;
               *)
                 DEPLOY_ENV=dev
@@ -120,9 +126,10 @@ commands:
                 echo "Defaulting $DEPLOY_TARGET_ENV to dev environment"
               ;;
             esac
-            echo "Setting deployment ENVIRONMENT to $DEPLOY_ENV"
-            echo "export ENVIRONMENT=$DEPLOY_ENV" >> $BASH_ENV
-            echo "export BUILD_PARAMS=$BUILD_PARAMS" >> $BASH_ENV
+            echo "Will use environment $ENVIRONMENT with vault path $VAULT_PATH"
+            echo "export ENVIRONMENT=$ENVIRONMENT" >> $BASH_ENV
+            echo "export VAULT_PATH=$VAULT_PATH" >> $BASH_ENV
+
             source $BASH_ENV
 
   deploy-stored-build:
@@ -141,7 +148,7 @@ commands:
           command: |
             set -u
             # we are getting our builds from the one bucket
-            readvault.sh secret/${ENVIRONMENT}/v1/conf .data.gcp.serviceKey | gcloud auth activate-service-account --key-file=-
+            readvault.sh secret/${VAULT_PATH}/conf .data.gcp.serviceKey | gcloud auth activate-service-account --key-file=-
             TAR_FILE_URL_PATTERN="gs://${BUILDS_BUCKET}/${ANGULAR_PROJECT_NAME}/${ANGULAR_PROJECT_NAME}_*_${SHORT_GIT_SHA}.tar.gz"
             echo "Looking for archive matching ${TAR_FILE_URL_PATTERN}"
             TAR_FILE_URL=`gsutil ls $TAR_FILE_URL_PATTERN  | sort -r | head -1`
@@ -170,7 +177,7 @@ commands:
           name: Setup gcloud context
           command: |
             set -u
-            readvault.sh secret/${ENVIRONMENT}/v1/conf .data.gcp.serviceKey | gcloud auth activate-service-account --key-file=-
+            readvault.sh secret/${VAULT_PATH}/conf .data.gcp.serviceKey | gcloud auth activate-service-account --key-file=-
             gcloud --quiet config set compute/zone ${GOOGLE_COMPUTE_ZONE}
       - run:
           name: <<parameters.study_key>> generate config files and copy pepperConfig.js
@@ -192,7 +199,7 @@ commands:
               cd ddp-workspace
               CONFIG_DIR="${OUTPUT_DIR}/assets/js"
               mkdir -p $CONFIG_DIR
-              gcloud --project="broad-ddp-${ENVIRONMENT}" secrets versions access latest --secret="study-manager-ui-config" > "${CONFIG_DIR}/ddp_config.js"
+              gcloud --project="${ENVIRONMENT}" secrets versions access latest --secret="study-manager-ui-config" > "${CONFIG_DIR}/ddp_config.js"
             fi
           environment: #Setting this ENV variable prevents launching a new Docker within build-study-sh script
             USE_DOCKER: false
@@ -201,13 +208,13 @@ commands:
           name: Deploy to GAE
           command: |
             set -u
-            gcloud app deploy --version="${SHORT_GIT_SHA}" --project "broad-ddp-${ENVIRONMENT}" "${ANGULAR_PROJECT_DIR_PATH}/app.yaml"
+            gcloud app deploy --version="${SHORT_GIT_SHA}" --project "${ENVIRONMENT}" "${ANGULAR_PROJECT_DIR_PATH}/app.yaml"
       - run:
           name: Update deployments sheet
           command: |
             set -u
             set +x
-            readvault.sh secret/${ENVIRONMENT}/v1/conf .data.gcp.serviceKey | \
+            readvault.sh secret/${VAULT_PATH}/conf .data.gcp.serviceKey | \
             reportdeploy.sh "$RELEASE_SHEET_ID" '<<parameters.study_key>> Angular client' "$ENVIRONMENT" "$CIRCLE_BUILD_NUM" "$CIRCLE_BUILD_URL"
       - run:
           name: Delete previous versions of service
@@ -221,7 +228,7 @@ commands:
             # find what other versions are currently running
             # skip first line, exclude our version, print 2nd column
             AWK_COMMMAND="NR > 1 && !/${SHORT_GIT_SHA}/ {print \$2}"
-            VERSIONS_TO_DELETE=$(gcloud app versions list --service "$SERVICE" --project "broad-ddp-${ENVIRONMENT}" | awk "${AWK_COMMMAND}")
+            VERSIONS_TO_DELETE=$(gcloud app versions list --service "$SERVICE" --project "${ENVIRONMENT}" | awk "${AWK_COMMMAND}")
 
             # Sometime deleting versions fails. If there are less than 3 versions then we are not going to worry about it
             # and set flag so this job step does not fail when exit error value is generated
@@ -231,7 +238,7 @@ commands:
 
             for VERSION_TO_DELETE in $VERSIONS_TO_DELETE; do
               echo "Deleting version $VERSION_TO_DELETE of service $SERVICE"
-              gcloud app versions delete --quiet --service "$SERVICE" "$VERSION_TO_DELETE" --project "broad-ddp-${ENVIRONMENT}"
+              gcloud app versions delete --quiet --service "$SERVICE" "$VERSION_TO_DELETE" --project "${ENVIRONMENT}"
             done;
             exit 0;
 
@@ -399,7 +406,7 @@ commands:
           name: Store build archive
           command: |
             set -u
-            readvault.sh secret/${ENVIRONMENT}/conf .data.gcp.serviceKey | gcloud auth activate-service-account --key-file=-
+            readvault.sh secret/${VAULT_PATH}/conf .data.gcp.serviceKey | gcloud auth activate-service-account --key-file=-
             gsutil cp  ${TAR_PATH} "gs://${BUILDS_BUCKET}/${ANGULAR_PROJECT_NAME}/${TAR_NAME}"
 
   conditionally-launch-build-and-deploy:
@@ -454,7 +461,7 @@ commands:
           command: |
             set -u
             set +e
-            readvault.sh secret/${ENVIRONMENT}/conf .data.gcp.serviceKey | gcloud auth activate-service-account --key-file=-
+            readvault.sh secret/${VAULT_PATH}/conf .data.gcp.serviceKey | gcloud auth activate-service-account --key-file=-
             TAR_FILE_URL_PATTERN="gs://${BUILDS_BUCKET}/${ANGULAR_PROJECT_NAME}/${ANGULAR_PROJECT_NAME}_*_${SHORT_GIT_SHA}.tar.gz"
             echo "Checking for ${TAR_FILE_URL_PATTERN}"
             # For some reason following line generating exit code 1 every time in CircleCI. Use set +e so script can continue
@@ -613,46 +620,24 @@ jobs:
           command: |
             mkdir -p playwright-env
 
-            export sitePwd=$(vault read --format=json secret/pepper/test/v1/e2e | jq -r ".data.sitePassword")
+            export sitePwd=$(vault read --format=json secret/${VAULT_PATH}/test/e2e | jq -r ".data.sitePassword")
             echo "export SITE_PASSWORD=$sitePwd" >> playwright-env/envvars
 
             #DSM
-            export dsmUser=$(vault read --format=json secret/pepper/test/v1/e2e | jq -r ".data.users | .[] | select(.app==\"dsm\") | .userName")
-            export dsmUserPassword=$(vault read --format=json secret/pepper/test/v1/e2e | jq -r ".data.users | .[] | select(.app==\"dsm\") | .password")
+            export dsmUser=$(vault read --format=json secret/${VAULT_PATH}/test/e2e | jq -r ".data.users | .[] | select(.app==\"dsm\") | .userName")
+            export dsmUserPassword=$(vault read --format=json secret/${VAULT_PATH}/test/e2e | jq -r ".data.users | .[] | select(.app==\"dsm\") | .password")
             echo "export DSM_USER_EMAIL=$dsmUser" >> playwright-env/envvars
             echo "export DSM_USER_PASSWORD=$dsmUserPassword" >> playwright-env/envvars
 
-            # SINGULAR
-            export singularUser=$(vault read --format=json secret/pepper/test/v1/e2e | jq -r ".data.users | .[] | select(.app==\"singular\") | .userName")
-            export singularUserPassword=$(vault read --format=json secret/pepper/test/v1/e2e | jq -r ".data.users | .[] | select(.app==\"singular\") | .password")
-            echo "export SINGULAR_USER_EMAIL=$singularUser" >> playwright-env/envvars
-            echo "export SINGULAR_USER_PASSWORD=$singularUserPassword" >> playwright-env/envvars
-
-            # RGP
-            export rgpUser=$(vault read --format=json secret/pepper/test/v1/e2e | jq -r ".data.users | .[] | select(.app==\"rgp\") | .userName")
-            export rgpUserPassword=$(vault read --format=json secret/pepper/test/v1/e2e | jq -r ".data.users | .[] | select(.app==\"rgp\") | .password")
-            echo "export RGP_USER_PASSWORD=$rgpUserPassword" >> playwright-env/envvars
-            echo "export RGP_USER_EMAIL=$rgpUser" >> playwright-env/envvars
-
-            # Read Auth0 RGP client credentials
-            export rgpDomain=$(vault read --format=json secret/pepper/test/v1/e2e | jq -r ".data.auth0 | .[] | select(.app==\"rgp\" and .env==\"<< parameters.env >>\") | .domain")
-            export rgpAudience=$(vault read --format=json secret/pepper/test/v1/e2e | jq -r ".data.auth0 | .[] | select(.app==\"rgp\" and .env==\"<< parameters.env >>\") | .audience")
-            export rgpClientId=$(vault read --format=json secret/pepper/test/v1/e2e | jq -r ".data.auth0 | .[] | select(.app==\"rgp\" and .env==\"<< parameters.env >>\") | .clientId")
-            export rgpClientSecret=$(vault read --format=json secret/pepper/test/v1/e2e | jq -r ".data.auth0 | .[] | select(.app==\"rgp\" and .env==\"<< parameters.env >>\") | .clientSecret")
-            echo "export RGP_AUTH0_DOMAIN=$rgpDomain" >> playwright-env/envvars
-            echo "export RGP_AUTH0_AUDIENCE=$rgpAudience" >> playwright-env/envvars
-            echo "export RGP_AUTH0_CLIENT_ID=$rgpClientId" >> playwright-env/envvars
-            echo "export RGP_AUTH0_CLIENT_SECRET=$rgpClientSecret" >> playwright-env/envvars
-
             # ANGIO
-            export angioUser=$(vault read --format=json secret/pepper/test/v1/e2e | jq -r ".data.users | .[] | select(.app==\"angio\") | .userName")
-            export angioUserPassword=$(vault read --format=json secret/pepper/test/v1/e2e | jq -r ".data.users | .[] | select(.app==\"angio\") | .password")
+            export angioUser=$(vault read --format=json secret/${VAULT_PATH}/test/e2e | jq -r ".data.users | .[] | select(.app==\"angio\") | .userName")
+            export angioUserPassword=$(vault read --format=json secret/${VAULT_PATH}/test/e2e | jq -r ".data.users | .[] | select(.app==\"angio\") | .password")
             echo "export ANGIO_USER_PASSWORD=$angioUserPassword" >> playwright-env/envvars
             echo "export ANGIO_USER_EMAIL=$angioUser" >> playwright-env/envvars
 
             # PANCAN
-            export pancanUser=$(vault read --format=json secret/pepper/test/v1/e2e | jq -r ".data.users | .[] | select(.app==\"pancan\") | .userName")
-            export pancanUserPassword=$(vault read --format=json secret/pepper/test/v1/e2e | jq -r ".data.users | .[] | select(.app==\"pancan\") | .password")
+            export pancanUser=$(vault read --format=json secret/${VAULT_PATH}/test/e2e | jq -r ".data.users | .[] | select(.app==\"pancan\") | .userName")
+            export pancanUserPassword=$(vault read --format=json secret/${VAULT_PATH}/test/e2e | jq -r ".data.users | .[] | select(.app==\"pancan\") | .password")
             echo "export PANCAN_USER_PASSWORD=$pancanUserPassword" >> playwright-env/envvars
             echo "export PANCAN_USER_EMAIL=$pancanUser" >> playwright-env/envvars
       - run:
@@ -862,13 +847,6 @@ workflows:
 
   deploy-all-apps-workflow:
     jobs:
-      - deploy-stored-build-job:
-          filters:
-            branches:
-              only:
-                - test
-                - staging
-          study_key: basil
       - deploy-stored-build-job: &deploy_branch_filters
           filters:
             branches:
@@ -888,46 +866,16 @@ workflows:
           study_key: angio
       - deploy-stored-build-job:
           <<: *deploy_branch_filters
-          study_key: testboston
-      - deploy-stored-build-job:
-          <<: *deploy_branch_filters
           study_key: mpc
-      - deploy-stored-build-job:
-          <<: *deploy_branch_filters
-          study_key: atcp
-      - deploy-stored-build-job:
-          <<: *deploy_branch_filters
-          study_key: rarex
-      - deploy-stored-build-job:
-          <<: *deploy_branch_filters
-          study_key: rgp
       - deploy-stored-build-job:
           <<: *deploy_branch_filters
           study_key: esc
       - deploy-stored-build-job:
           <<: *deploy_branch_filters
-          study_key: prion
-      - deploy-stored-build-job:
-          <<: *deploy_branch_filters
-          study_key: cgc
-      - deploy-stored-build-job:
-          <<: *deploy_branch_filters
-          study_key: circadia
-      - deploy-stored-build-job:
-          <<: *deploy_branch_filters
           study_key: pancan
       - deploy-stored-build-job:
           <<: *deploy_branch_filters
-          study_key: singular
-      - deploy-stored-build-job:
-          <<: *deploy_branch_filters
-          study_key: brugada
-      - deploy-stored-build-job:
-          <<: *deploy_branch_filters
           study_key: lms
-      - deploy-stored-build-job:
-          <<: *deploy_branch_filters
-          study_key: fon
 
   scheduled-playwright-test:
     # Triggered every 4 hours on Monday through Friday

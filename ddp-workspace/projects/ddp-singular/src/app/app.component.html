@@ -1,8 +1,0 @@
-<app-header></app-header>
-<main [ngClass]="{'dashboard-participant': (routerPath | async) === participantsPath}">
-  <router-outlet (activate)="onActivate()"></router-outlet>
-</main>
-<app-footer></app-footer>
-
-<app-success-message></app-success-message>
-<app-session-expired-dialog></app-session-expired-dialog>
