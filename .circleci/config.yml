@@ -178,7 +178,7 @@ commands:
           command: |
             set -u
             readvault.sh secret/${VAULT_PATH}/conf .data.gcp.serviceKey | gcloud auth activate-service-account --key-file=-
-            gcloud --quiet config set compute/zone ${GOOGLE_COMPUTE_ZONE}
+            gcloud --quiet config set compute/zone us-central1-a
       - run:
           name: <<parameters.study_key>> generate config files and copy pepperConfig.js
           command: |
@@ -442,7 +442,7 @@ commands:
                                       \"study_key\": \"$STUDY_KEY\",
                                       \"do-builds\": true
                                   }
-                                }" https://circleci.com/api/v2/project/gh/broadinstitute/ddp-angular/pipeline
+                                }" https://circleci.com/api/v2/project/gh/broadinstitute/pepper-cmi-angular/pipeline
               else
                 echo "Skipping $STUDY_KEY"
               fi
@@ -477,7 +477,7 @@ commands:
                       "study_key": "<<parameters.study_key>>",
                       "do-builds": true
                   }
-                }' https://circleci.com/api/v2/project/gh/broadinstitute/ddp-angular/pipeline
+                }' https://circleci.com/api/v2/project/gh/broadinstitute/pepper-cmi-angular/pipeline
               else
                 echo "Build for <<parameters.study_key>> found at URL: ${TAR_FILE_URL}. No new build will be initiated"
             fi
