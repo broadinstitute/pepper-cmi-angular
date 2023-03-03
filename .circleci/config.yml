@@ -129,6 +129,7 @@ commands:
             echo "Will use environment $ENVIRONMENT with vault path $VAULT_PATH"
             echo "export ENVIRONMENT=$ENVIRONMENT" >> $BASH_ENV
             echo "export VAULT_PATH=$VAULT_PATH" >> $BASH_ENV
+            echo "export BUILD_PARAMS=$BUILD_PARAMS" >> $BASH_ENV
 
             source $BASH_ENV
 
