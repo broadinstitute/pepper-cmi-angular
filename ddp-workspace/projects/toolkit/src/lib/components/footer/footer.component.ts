@@ -7,7 +7,7 @@ import { AnalyticsEventsService, WindowRef, AnalyticsEventCategories, NGXTransla
 import { Observable } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 
-// tttt
+// ttttt
 
 @Component({
     selector: 'toolkit-footer',

@@ -31,7 +31,7 @@ STUDY_KEY=$1; shift # handy name for the study, such as angio or brain.  Not the
 STUDY_GUID=$1; shift # guid for the study, as per pepper study configuration
 
 ANGULAR_DIR="ddp-${STUDY_KEY}" # location of angular code
-IMAGE_BASE="broadinstitute/pepper-${STUDY_KEY}" # base name fo rimage
+IMAGE_BASE="broadinstitute/pepper-cmi-${STUDY_KEY}" # base name fo rimage
 VAULT_TOKEN=$VAULT_TOKEN
 tag=${VERSION}_${ENVIRONMENT}
 GIT_SHA=$(git rev-parse --verify HEAD)
