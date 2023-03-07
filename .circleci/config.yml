@@ -18,9 +18,9 @@ references:
       - *npm_cache_key
   # Note: important that values of guids and keys have matching order!"
   study_keys: &study_keys
-    "dsm-ui osteo brain angio mbc mpc esc cgc pancan lms"
+    "dsm-ui osteo brain angio mbc mpc esc pancan lms"
   study_guids: &study_guids
-    "basil NA CMI-OSTEO cmi-brain ANGIO cmi-mbc testboston cmi-mpc PRION atcp rarex RGP cmi-esc cgc circadia cmi-pancan singular brugada cmi-lms fon"
+    "dsm CMI-OSTEO cmi-brain ANGIO cmi-mbc cmi-mpc cmi-esc cmi-pancan cmi-lms"
 
   # Job runs for develop branch only
   filter-develop-branch: &filter-develop-branch
@@ -185,7 +185,7 @@ commands:
           command: |
             set -u
             if [[ "<<parameters.study_key>>" != "dsm-ui" ]]; then
-              ./build-study.sh v1 $ENVIRONMENT . <<parameters.study_key>> "$STUDY_GUID" --config
+              ./build-study.sh v1 $ENVIRONMENT . <<parameters.study_key>> "$STUDY_GUID" "$VAULT_PATH" --config
               cd ddp-workspace
               CONFIG_DIR="${OUTPUT_DIR}/assets/config"
               mkdir -p $CONFIG_DIR

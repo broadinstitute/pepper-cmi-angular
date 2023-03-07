@@ -4,12 +4,13 @@ set -e
 ENV=$1
 PROJECT=$2
 STUDY_GUID=$3
-if [ "$ENV" == "" ]  ||  [ "$PROJECT" == "" ]  ||  [ "$STUDY_GUID" == "" ];
+VAULT_PATH=$4
+if [ "$ENV" == "" ]  ||  [ "$PROJECT" == "" ]  ||  [ "$STUDY_GUID" == "" ] ||  [ "$VAULT_PATH" == "" ] ;
 then
-    echo "usage: deploy-to-appengine.sh environment project study_guid"
+    echo "usage: deploy-to-appengine.sh environment project study_guid vault_path"
     exit 0
 fi
-./build-study.sh v1 "$ENV" "$PROJECT" "$STUDY_GUID" --config
+./build-study.sh v1 "$ENV" "$PROJECT" "$STUDY_GUID" "$VAULT_PATH" --config
 
 ANGULAR_PROJECT_DIR_NAME="ddp-${PROJECT}"
 ANGULAR_PROJECT_DIR_PATH="projects/${ANGULAR_PROJECT_DIR_NAME}"

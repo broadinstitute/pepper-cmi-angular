@@ -2,12 +2,13 @@
 {{$version := env "VERSION"}}
 {{$study := env "STUDY_KEY"}}
 {{$study_guid := env "STUDY_GUID"}}
+{{$vault_path := env "VAULT_PATH"}}
 
 var DDP_ENV = {
     auth0SilentRenewUrl: location.origin + '/silentRenew',
     loginLandingUrl: location.origin + '/login-landing',
     doLocalRegistration: false,
-    {{ with secret (printf "secret/%s/conf" $environment ) }}
+    {{ with secret (printf "secret/%s/conf" $vault_path ) }}
     mapsApiKey: "{{.Data.mapsApiKey}}",
     errorReportingApiKey: "{{.Data.errorReportingApiKey}}",
     projectGcpId: "{{.Data.googleProjectId}}",
@@ -22,41 +23,28 @@ var DDP_ENV = {
 };
 
 // Log levels: 1 - debug; 2 - info; 3 - warning; 4 - error. E.g. 1 includes debug level and higher, 2 includes info and higher, etc.
-{{if eq $environment "dev"}}
+{{if eq $environment "pepper-cmi-dev"}}
     DDP_ENV['logLevel'] = 1;
-{{else if eq $environment "test"}}
+{{else if eq $environment "pepper-cmi-test"}}
     DDP_ENV['logLevel'] = 1;
-{{else if eq $environment "staging"}}
+{{else if eq $environment "pepper-cmi-staging"}}
     DDP_ENV['logLevel'] = 1;
-{{else if eq $environment "prod"}}
+{{else if eq $environment "pepper-cmi-prod"}}
     DDP_ENV['logLevel'] = 2;
 {{end}}
 
-{{if ne $environment "prod"}}
+{{if ne $environment "pepper-cmi-prod"}}
     DDP_ENV['tcellappid'] = "DDPnonprod-Vtzu0";
     DDP_ENV['tcellapikey'] = "AQQBBAFQRfEEcVxKDIp5-H_LGp_x5Ykr_7xkQKq_rgn_P58IWs8oBu7BroR_bLLIuwLERH8";
     DDP_ENV['platformGAToken'] = "UA-108484823-1";
-{{else if eq $environment "prod"}}
+{{else if eq $environment "pepper-cmi-prod"}}
     DDP_ENV['tcellappid'] = "DDPProd-QjSnj";
     DDP_ENV['tcellapikey'] = "AQQBBAEc1FEk9mhHArU8Nig_jpaJ5Ykr_7xkQKq_rgn_P58IWuenpXxkPI_Mi7uJjKSsoRQ";
     DDP_ENV['platformGAToken'] = "UA-108484823-1";
 {{end}}
 
-{{if eq $study_guid "basil"}}
-    {{with secret (printf "secret/%s/basil/conf" $environment )}}
-        DDP_ENV['auth0ClientId'] = "{{.Data.auth0.appClientId}}";
-        DDP_ENV['adminClientId'] = "{{.Data.auth0.adminClientId}}";
-        DDP_ENV['auth0Domain'] = "{{.Data.auth0.loginDomain}}";
-        DDP_ENV['auth0Audience'] = "{{.Data.auth0.loginDomain}}";
-        DDP_ENV['basePepperUrl'] = "{{.Data.serverBaseUrl}}";
-        DDP_ENV['recaptchaSiteClientKey'] = "{{.Data.recaptchaSiteClientKey}}",
-    {{end}}
-    DDP_ENV['adminLoginLandingUrl'] = location.origin + '/admin-login-landing';
-    DDP_ENV['projectGAToken'] = "UA-108484823-1";
-{{end}}
-
 {{if (eq $study_guid "ANGIO" "cmi-brain" "cmi-esc" "cmi-mbc" "cmi-mpc" "CMI-OSTEO" "cmi-pancan" "cmi-lms")}}
-    {{if eq $environment "dev"}}
+    {{if eq $environment "pepper-cmi-dev"}}
         DDP_ENV['auth0Domain'] = "login-dev.joincountmein.org";
         DDP_ENV['auth0Audience'] = "ddp-dev.auth0.com";
         DDP_ENV['basePepperUrl'] = "https://pepper-dev.datadonationplatform.org";
@@ -64,7 +52,7 @@ var DDP_ENV = {
             DDP_ENV['languageHostNames'] = [{languageCode: 'es', hostName: 'mbc-dot-broad-ddp-dev.uc.r.appspot.com'}];
             DDP_ENV['baseHostName'] = 'mbc.dev.datadonationplatform.org';
         {{end}}
-    {{else if eq $environment "test"}}
+    {{else if eq $environment "pepper-cmi-test"}}
         DDP_ENV['auth0Domain'] = "login-test.joincountmein.org";
         DDP_ENV['auth0Audience'] = "ddp-test.auth0.com";
         DDP_ENV['basePepperUrl'] = "https://pepper-test.datadonationplatform.org";
@@ -72,7 +60,7 @@ var DDP_ENV = {
             DDP_ENV['languageHostNames'] = [{languageCode: 'es', hostName: 'mbc-dot-broad-ddp-test.uc.r.appspot.com'}];
             DDP_ENV['baseHostName'] = 'mbc.test.datadonationplatform.org';
         {{end}}
-    {{else if eq $environment "staging"}}
+    {{else if eq $environment "pepper-cmi-staging"}}
         DDP_ENV['auth0Domain'] = "login-staging.joincountmein.org";
         DDP_ENV['auth0Audience'] = "ddp-staging.auth0.com";
         DDP_ENV['basePepperUrl'] = "https://pepper-staging.datadonationplatform.org";
@@ -80,7 +68,7 @@ var DDP_ENV = {
             DDP_ENV['languageHostNames'] = [{languageCode: 'es', hostName: 'mbc-dot-broad-ddp-staging.uc.r.appspot.com'}];
             DDP_ENV['baseHostName'] = 'mbc.staging.datadonationplatform.org';
         {{end}}
-    {{else if eq $environment "prod"}}
+    {{else if eq $environment "pepper-cmi-prod"}}
         DDP_ENV['auth0Domain'] = "login.joincountmein.org";
         DDP_ENV['auth0Audience'] = "datadonationplatform.auth0.com";
         DDP_ENV['basePepperUrl'] = "https://pepper.datadonationplatform.org";
@@ -96,12 +84,12 @@ var DDP_ENV = {
 
     DDP_ENV['adminLoginLandingUrl'] = location.origin + '/admin-login-landing';
 
-    {{with secret (printf "secret/%s/%s/conf" $environment  $study)}}
+    {{with secret (printf "secret/%s/%s/conf" $vault_path  $study)}}
         DDP_ENV['auth0ClientId'] = "{{.Data.auth0.clientId}}";
         DDP_ENV['adminClientId'] = "{{.Data.auth0.adminClientId}}";
     {{end}}
 
-    {{if eq $environment "prod"}}
+    {{if eq $environment "pepper-cmi-prod"}}
         {{if eq $study_guid "ANGIO"}}
             DDP_ENV['projectGAToken'] = "UA-64885513-2";
         {{else if eq $study_guid "cmi-brain"}}
@@ -121,285 +109,5 @@ var DDP_ENV = {
         {{end}}
     {{else}}
         DDP_ENV['projectGAToken'] = "UA-108484823-1";
-    {{end}}
-{{end}}
-
-{{if eq $study_guid "atcp"}}
-    {{if eq $environment "local"}}
-        DDP_ENV['auth0ClientId'] = "edW0M3DUc9D2IwimW0NVfnPZwlRNdH9v";
-        DDP_ENV['auth0Domain'] = "at-dev.auth0.com";
-        DDP_ENV['auth0Audience'] = "at-dev.auth0.com";
-        DDP_ENV['basePepperUrl'] = "https://pepper-dev.datadonationplatform.org";
-    {{else}}
-        {{with secret (printf "secret/%s/atcp/conf" $environment )}}
-            DDP_ENV['recaptchaSiteClientKey'] = "{{.Data.recaptchaSiteClientKey}}",
-            DDP_ENV['darUrl'] = "{{.Data.cloudFunctions.darUrl}}"
-            DDP_ENV['auth0ClientId'] = "{{.Data.auth0.clientId}}";
-            DDP_ENV['auth0Domain'] = "{{.Data.auth0.loginDomain}}";
-            DDP_ENV['auth0Audience'] = "{{.Data.auth0.loginDomain}}";
-            DDP_ENV['basePepperUrl'] = "{{.Data.serverBaseUrl}}";
-        {{end}}
-    {{end}}
-{{end}}
-
-{{if eq $study_guid "testboston"}}
-    {{with secret (printf "secret/%s/%s/conf" $environment $study) }}
-        DDP_ENV['recaptchaSiteClientKey'] = "{{.Data.recaptchaSiteClientKey}}",
-    {{end}}
-    {{if eq $environment "dev"}}
-        DDP_ENV['auth0Domain'] = "login-dev.testboston.org";
-        DDP_ENV['auth0Audience'] = "testboston-dev.auth0.com";
-        DDP_ENV['auth0ClientId'] = "m4lhHnq2WvRm3lloUHbQzwCte7s03o3S";
-        DDP_ENV['adminClientId'] = "OC3gFZD8vIBiKlJ3tPUJJ2cUI5EwVFSz";
-        DDP_ENV['projectGAToken'] = "UA-108484823-1";
-        DDP_ENV['basePepperUrl'] = "https://pepper-dev.datadonationplatform.org";
-        DDP_ENV['adminLoginLandingUrl'] = location.origin + '/admin-login-landing';
-    {{else if eq $environment "test"}}
-        DDP_ENV['auth0Domain'] = "login-test.testboston.org";
-        DDP_ENV['auth0Audience'] = "testboston-test.us.auth0.com";
-        DDP_ENV['auth0ClientId'] = "p6gaxoWSnbvtqgoc28JPoQ7STc2SlJmk";
-        DDP_ENV['adminClientId'] = "8cZcA44HYWNEltYSvsGX3BMm0804QI1j";
-        DDP_ENV['projectGAToken'] = "UA-108484823-1";
-        DDP_ENV['basePepperUrl'] = "https://pepper-test.datadonationplatform.org";
-        DDP_ENV['adminLoginLandingUrl'] = location.origin + '/admin-login-landing';
-    {{else if eq $environment "staging"}}
-        DDP_ENV['auth0Domain'] = "login-staging.testboston.org";
-        DDP_ENV['auth0Audience'] = "testboston-staging.us.auth0.com";
-        DDP_ENV['auth0ClientId'] = "zNU2qpu4qnluDQQ1JZI9y4teFv9714sy";
-        DDP_ENV['adminClientId'] = "22Kae1yqJ5NMIeKZ8gMnSstadYSXOfHW";
-        DDP_ENV['projectGAToken'] = "UA-108484823-1";
-        DDP_ENV['basePepperUrl'] = "https://pepper-staging.datadonationplatform.org";
-        DDP_ENV['adminLoginLandingUrl'] = location.origin + '/admin-login-landing';
-    {{else if eq $environment "prod"}}
-        DDP_ENV['auth0Domain'] = "login.testboston.org";
-        DDP_ENV['auth0Audience'] = "testboston.us.auth0.com";
-        DDP_ENV['auth0ClientId'] = "hii1V1gRutoFYUbVOoYQSISbdzVeDEXf";
-        DDP_ENV['adminClientId'] = "5LE9MyQ4fQqpj0PoKGnzy2DAiwol7oGN";
-        DDP_ENV['projectGAToken'] = "UA-176066310-1";
-        DDP_ENV['basePepperUrl'] = "https://pepper.datadonationplatform.org";
-        DDP_ENV['adminLoginLandingUrl'] = location.origin + '/admin-login-landing';
-    {{end}}
-{{end}}
-
-{{if eq $study_guid "PRION"}}
-    {{if eq $environment "dev"}}
-        DDP_ENV['assetsBucketName'] = "dev-prion-assets";
-        DDP_ENV['auth0ClientId'] = "OAcbZBVls3kOlmRfg75rgBOez2R12AKv";
-        DDP_ENV['auth0Domain'] = "prion-dev.auth0.com";
-        DDP_ENV['auth0Audience'] = "prion-dev.auth0.com"
-        DDP_ENV['basePepperUrl'] = "https://pepper-dev.datadonationplatform.org";
-        DDP_ENV['projectGAToken'] = "UA-172530202-1";
-    {{end}}
-    {{if eq $environment "test"}}
-        DDP_ENV['assetsBucketName'] = "dev-prion-assets";
-        DDP_ENV['auth0ClientId'] = "fsV246n2twBCp5OBd9F9CF3t4ZeeVEbD";
-        DDP_ENV['auth0Domain'] = "prion-test.us.auth0.com";
-        DDP_ENV['auth0Audience'] = "prion-test.us.auth0.com"
-        DDP_ENV['basePepperUrl'] = "https://pepper-test.datadonationplatform.org";
-        DDP_ENV['projectGAToken'] = "UA-172530202-1";
-    {{end}}
-    {{if eq $environment "staging"}}
-         DDP_ENV['assetsBucketName'] = "dev-prion-assets";
-         DDP_ENV['auth0ClientId'] = "qDfxjZJWbcInLWTUjOkusnMa0iLK72Dy";
-         DDP_ENV['auth0Domain'] = "prion-staging.us.auth0.com";
-         DDP_ENV['auth0Audience'] = "prion-staging.us.auth0.com";
-         DDP_ENV['basePepperUrl'] = "https://pepper-staging.datadonationplatform.org";
-         DDP_ENV['projectGAToken'] = "UA-172530202-1";
-    {{end}}
-    {{if eq $environment "prod"}}
-        DDP_ENV['assetsBucketName'] = "prion-assets";
-        DDP_ENV['auth0ClientId'] = "4XeiPxTKb90dXmWmDX87u8Ul7b02G2Py";
-        DDP_ENV['auth0Domain'] = "prion-production.us.auth0.com";
-        DDP_ENV['auth0Audience'] = "prion-production.us.auth0.com";
-        DDP_ENV['basePepperUrl'] = "https://pepper.datadonationplatform.org";
-        DDP_ENV['projectGAToken'] = "UA-172530202-1";
-    {{end}}
-{{end}}
-
-{{if eq $study_guid "rarex"}}
-    {{if eq $environment "local"}}
-        DDP_ENV['auth0ClientId'] = "5eatFpMAeiRfsJqIZOjTEut5RDCSwrhI";
-        DDP_ENV['auth0Domain'] = "rarex-dev.us.auth0.com";
-        DDP_ENV['auth0Audience'] = "rarex-dev.us.auth0.com";
-        DDP_ENV['basePepperUrl'] = "https://pepper-dev.datadonationplatform.org";
-        DDP_ENV['projectGAToken'] = "UA-108484823-1";
-    {{end}}
-
-    {{if eq $environment "dev"}}
-        DDP_ENV['auth0ClientId'] = "gE6vFadpN49ajn76zdSW5FiCqz4aUdlJ";
-        DDP_ENV['auth0Domain'] = "rarex-dev.us.auth0.com";
-        DDP_ENV['auth0Audience'] = "rarex-dev.us.auth0.com";
-        DDP_ENV['basePepperUrl'] = "https://pepper-dev.datadonationplatform.org";
-        DDP_ENV['projectGAToken'] = "UA-108484823-1";
-    {{end}}
-
-    {{if eq $environment "test"}}
-        DDP_ENV['auth0ClientId'] = "4Azj6TSFYVdegmcrY3onCq237PLAhK3Q";
-        DDP_ENV['auth0Domain'] = "rarex-test.us.auth0.com";
-        DDP_ENV['auth0Audience'] = "rarex-test.us.auth0.com";
-        DDP_ENV['basePepperUrl'] = "https://pepper-test.datadonationplatform.org";
-        DDP_ENV['projectGAToken'] = "UA-108484823-1";
-    {{end}}
-
-    {{if eq $environment "staging"}}
-        DDP_ENV['auth0ClientId'] = "9bkaGaDGvFueNjUDC6PNJa2WvcqsUdn4";
-        DDP_ENV['auth0Domain'] = "rarex-staging.us.auth0.com";
-        DDP_ENV['auth0Audience'] = "rarex-staging.us.auth0.com";
-        DDP_ENV['basePepperUrl'] = "https://pepper-staging.datadonationplatform.org";
-        DDP_ENV['projectGAToken'] = "UA-108484823-1";
-    {{end}}
-
-    {{if eq $environment "prod"}}
-        DDP_ENV['auth0ClientId'] = "7RO0fGEmpGze4J5aPrgIax1hlZgfs7IJ";
-        DDP_ENV['auth0Domain'] = "login.dcp.rare-x.org";
-        DDP_ENV['auth0Audience'] = "rarex-prod.us.auth0.com";
-        DDP_ENV['basePepperUrl'] = "https://pepper.datadonationplatform.org";
-        DDP_ENV['projectGAToken'] = "UA-5430047-79";
-    {{end}}
-{{end}}
-
-{{if eq $study_guid "RGP"}}
-    {{if eq $environment "local"}}
-        DDP_ENV['auth0ClientId'] = "Bal2RZDbCcWHV5W2QgenIWRRN31GGO52";
-        DDP_ENV['auth0Domain'] = "rgp-dev.us.auth0.com";
-        DDP_ENV['auth0Audience'] = "rgp-dev.us.auth0.com";
-        DDP_ENV['basePepperUrl'] = "https://pepper-dev.datadonationplatform.org";
-        DDP_ENV['projectGAToken'] = "fixme-not-set";
-    {{else}}
-        {{with secret (printf "secret/%s/rgp/conf" $environment )}}
-            DDP_ENV['auth0ClientId'] = "{{.Data.auth0.clientId}}";
-            DDP_ENV['auth0Domain'] = "{{.Data.auth0.loginDomain}}";
-            DDP_ENV['auth0Audience'] = "{{.Data.auth0.loginDomain}}";
-            DDP_ENV['basePepperUrl'] = "{{.Data.serverBaseUrl}}";
-        {{end}}
-        {{if eq $environment "prod"}}
-            DDP_ENV['projectGAToken'] = "UA-102514572-1";
-        {{else}}
-            DDP_ENV['projectGAToken'] = "UA-108484823-1";
-        {{end}}
-    {{end}}
-{{end}}
-
-{{if eq $study_guid "circadia"}}
-    {{with secret (printf "secret/%s/%s/conf" $environment $study) }}
-        DDP_ENV['sleepLogConnectorUrl'] = "{{.Data.sleepLogConnectorUrl}}",
-        DDP_ENV['enrollmentPaused'] = {{.Data.enrollmentPaused}},
-    {{end}}
-
-    {{if eq $environment "local"}}
-        DDP_ENV['auth0ClientId'] = "GMMFtLjB1c38Fmr3UVEm8WqBsvCIeJ9d";
-        DDP_ENV['auth0Domain'] = "circadia-dev.us.auth0.com";
-        DDP_ENV['auth0Audience'] = "circadia-dev.us.auth0.com";
-        DDP_ENV['basePepperUrl'] = "http://localhost:5556";
-        DDP_ENV['enrollmentPaused'] = false,
-    {{end}}
-
-    {{with secret (printf "secret/%s/circadia/conf" $environment )}}
-        DDP_ENV['auth0ClientId'] = "{{.Data.auth0.clientId}}";
-        DDP_ENV['auth0Domain'] = "{{.Data.auth0.loginDomain}}";
-        DDP_ENV['auth0Audience'] = "{{.Data.auth0.loginDomain}}";
-        DDP_ENV['basePepperUrl'] = "{{.Data.serverBaseUrl}}";
-    {{end}}
-{{end}}
-
-{{if eq $study_guid "singular"}}
-    {{if eq $environment "local"}}
-        DDP_ENV['auth0ClientId'] = "4bFP99CkKCY71IeCDkmcUQSkbxvaIJXZ";
-        DDP_ENV['auth0Domain'] = "singular-dev.us.auth0.com";
-        DDP_ENV['auth0Audience'] = "singular-dev.us.auth0.com";
-        DDP_ENV['basePepperUrl'] = "http://localhost:5556";
-    {{end}}
-
-    {{with secret (printf "secret/%s/singular/conf" $environment )}}
-        DDP_ENV['analyticsToken'] = "{{.Data.analyticsToken}}";
-        DDP_ENV['auth0ClientId'] = "{{.Data.auth0.clientId}}";
-        DDP_ENV['auth0Domain'] = "{{.Data.auth0.loginDomain}}";
-        DDP_ENV['auth0Audience'] = "{{.Data.auth0.loginDomain}}";
-        DDP_ENV['basePepperUrl'] = "{{.Data.serverBaseUrl}}";
-
-        {{if (eq $environment "prod" "staging")}}
-            DDP_ENV['recaptchaSiteClientKey'] = "{{.Data.recaptchaSiteClientKey}}";
-        {{else}}
-            DDP_ENV['recaptchaSiteClientKey'] = "{{.Data.recaptchaSiteClientKeyForAutoTests}}";
-        {{end}}
-    {{end}}
-{{end}}
-
-{{if eq $study_guid "cgc"}}
-    {{if eq $environment "local"}}
-        DDP_ENV['auth0ClientId'] = "rJyIQ6yXIZsXiOUobx5nb9lqAaJcIypR";
-        DDP_ENV['auth0Domain'] = "cgc-dev.us.auth0.com";
-        DDP_ENV['auth0Audience'] = "cgc-dev.us.auth0.com";
-        DDP_ENV['basePepperUrl'] = "https://pepper-dev.datadonationplatform.org";
-        DDP_ENV['projectGAToken'] = "TBD";
-    {{end}}
-
-    {{if eq $environment "dev"}}
-        DDP_ENV['auth0ClientId'] = "hqyjbOmfft4PNk0J8Ff4RigtGs4Kl4Jz";
-        DDP_ENV['auth0Domain'] = "cgc-dev.us.auth0.com";
-        DDP_ENV['auth0Audience'] = "cgc-dev.us.auth0.com";
-        DDP_ENV['basePepperUrl'] = "https://pepper-dev.datadonationplatform.org";
-        DDP_ENV['projectGAToken'] = "TBD";
-    {{end}}
-
-    {{if eq $environment "test"}}
-        DDP_ENV['auth0ClientId'] = "TBD";
-        DDP_ENV['auth0Domain'] = "TBD";
-        DDP_ENV['auth0Audience'] = "TBD";
-        DDP_ENV['basePepperUrl'] = "https://pepper-test.datadonationplatform.org";
-        DDP_ENV['projectGAToken'] = "TBD";
-    {{end}}
-
-    {{if eq $environment "staging"}}
-        DDP_ENV['auth0ClientId'] = "TBD";
-        DDP_ENV['auth0Domain'] = "TBD";
-        DDP_ENV['auth0Audience'] = "TBD";
-        DDP_ENV['basePepperUrl'] = "https://pepper-staging.datadonationplatform.org";
-        DDP_ENV['projectGAToken'] = "TBD";
-    {{end}}
-
-    {{if eq $environment "prod"}}
-        DDP_ENV['auth0ClientId'] = "TBD";
-        DDP_ENV['auth0Domain'] = "TBD";
-        DDP_ENV['auth0Audience'] = "TBD";
-        DDP_ENV['basePepperUrl'] = "https://pepper.datadonationplatform.org";
-        DDP_ENV['projectGAToken'] = "TBD";
-    {{end}}
-{{end}}
-
-{{if eq $study_guid "brugada"}}
-    {{with secret (printf "secret/%s/%s/conf" $environment $study) }}
-        DDP_ENV['recaptchaSiteClientKey'] = "{{.Data.recaptchaSiteClientKey}}";
-        DDP_ENV['dbName'] = "{{.Data.auth0.dbName}}";
-    {{end}}
-
-    {{if eq $environment "local"}}
-        DDP_ENV['auth0ClientId'] = "pyZRLJuSTtBzu4xwllQ7tzz2GAyuauSs";
-        DDP_ENV['auth0Domain'] = "brugada-dev.us.auth0.com";
-        DDP_ENV['auth0Audience'] = "brugada-dev.us.auth0.com";
-        DDP_ENV['basePepperUrl'] = "http://localhost:5556";
-    {{end}}
-
-    {{with secret (printf "secret/%s/brugada/conf" $environment )}}
-        DDP_ENV['auth0ClientId'] = "{{.Data.auth0.clientId}}";
-        DDP_ENV['auth0Domain'] = "{{.Data.auth0.loginDomain}}";
-        DDP_ENV['auth0Audience'] = "{{.Data.auth0.loginDomain}}";
-        DDP_ENV['basePepperUrl'] = "{{.Data.serverBaseUrl}}";
-    {{end}}
-{{end}}
-
-{{if eq $study_guid "fon"}}
-    {{if eq $environment "local"}}
-        DDP_ENV['auth0ClientId'] = "9X5Foi4NXWsER2A1EjLd3vYqqzRcO9Wp";
-        DDP_ENV['auth0Domain'] = "ddp-fon-dev.us.auth0.com";
-        DDP_ENV['auth0Audience'] = "ddp-fon-dev.us.auth0.com";
-        DDP_ENV['basePepperUrl'] = "http://localhost:5556";
-    {{end}}
-
-    {{with secret (printf "secret/%s/fon/conf" $environment)}}
-        DDP_ENV['auth0ClientId'] = "{{.Data.auth0.clientId}}";
-        DDP_ENV['auth0Domain'] = "{{.Data.auth0.loginDomain}}";
-        DDP_ENV['auth0Audience'] = "{{.Data.auth0.loginDomain}}";
-        DDP_ENV['basePepperUrl'] = "{{.Data.serverBaseUrl}}";
     {{end}}
 {{end}}
