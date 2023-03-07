@@ -47,31 +47,31 @@ var DDP_ENV = {
     {{if eq $environment "pepper-cmi-dev"}}
         DDP_ENV['auth0Domain'] = "login-dev.joincountmein.org";
         DDP_ENV['auth0Audience'] = "ddp-dev.auth0.com";
-        DDP_ENV['basePepperUrl'] = "https://pepper-dev.datadonationplatform.org";
+        DDP_ENV['basePepperUrl'] = "https://pepper-backend-dot-pepper-cmi-dev.uc.r.appspot.com/";
         {{if eq $study_guid "cmi-mbc"}}
-            DDP_ENV['languageHostNames'] = [{languageCode: 'es', hostName: 'mbc-dot-broad-ddp-dev.uc.r.appspot.com'}];
-            DDP_ENV['baseHostName'] = 'mbc.dev.datadonationplatform.org';
+            DDP_ENV['languageHostNames'] = [{languageCode: 'es', hostName: 'mbc-dot-pepper-cmi-dev.uc.r.appspot.com/'}];
+            DDP_ENV['baseHostName'] = 'https://mbc-dot-pepper-cmi-dev.uc.r.appspot.com/';
         {{end}}
     {{else if eq $environment "pepper-cmi-test"}}
         DDP_ENV['auth0Domain'] = "login-test.joincountmein.org";
         DDP_ENV['auth0Audience'] = "ddp-test.auth0.com";
-        DDP_ENV['basePepperUrl'] = "https://pepper-test.datadonationplatform.org";
+        DDP_ENV['basePepperUrl'] = "https://pepper-backend-dot-pepper-cmi-test.uc.r.appspot.com/";
         {{if eq $study_guid "cmi-mbc"}}
-            DDP_ENV['languageHostNames'] = [{languageCode: 'es', hostName: 'mbc-dot-broad-ddp-test.uc.r.appspot.com'}];
-            DDP_ENV['baseHostName'] = 'mbc.test.datadonationplatform.org';
+            DDP_ENV['languageHostNames'] = [{languageCode: 'es', hostName: 'mbc-dot-pepper-cmi-test.uc.r.appspot.com/'}];
+            DDP_ENV['baseHostName'] = 'https://mbc-dot-pepper-cmi-test.uc.r.appspot.com/';
         {{end}}
     {{else if eq $environment "pepper-cmi-staging"}}
         DDP_ENV['auth0Domain'] = "login-staging.joincountmein.org";
         DDP_ENV['auth0Audience'] = "ddp-staging.auth0.com";
-        DDP_ENV['basePepperUrl'] = "https://pepper-staging.datadonationplatform.org";
+        DDP_ENV['basePepperUrl'] = "https://pepper-backend-dot-pepper-cmi-staging.uc.r.appspot.com/";
         {{if eq $study_guid "cmi-mbc"}}
-            DDP_ENV['languageHostNames'] = [{languageCode: 'es', hostName: 'mbc-dot-broad-ddp-staging.uc.r.appspot.com'}];
-            DDP_ENV['baseHostName'] = 'mbc.staging.datadonationplatform.org';
+            DDP_ENV['languageHostNames'] = [{languageCode: 'es', hostName: 'https://mbc-dot-pepper-cmi-staging.uc.r.appspot.com/'}];
+            DDP_ENV['baseHostName'] = 'https://mbc-dot-pepper-cmi-staging.uc.r.appspot.com/';
         {{end}}
     {{else if eq $environment "pepper-cmi-prod"}}
         DDP_ENV['auth0Domain'] = "login.joincountmein.org";
         DDP_ENV['auth0Audience'] = "datadonationplatform.auth0.com";
-        DDP_ENV['basePepperUrl'] = "https://pepper.datadonationplatform.org";
+        DDP_ENV['basePepperUrl'] = "https://pepper-backend-dot-pepper-cmi-prod.uc.r.appspot.com/";
         {{if eq $study_guid "cmi-mbc"}}
             DDP_ENV['languageHostNames'] = [{languageCode: 'es', hostName: 'mbcprojectespañol.org'},
                                            {languageCode: 'es', hostName: 'mbcprojectenespanol.com'},
