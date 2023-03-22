@@ -45,8 +45,8 @@ var DDP_ENV = {
 
 {{if (eq $study_guid "ANGIO" "cmi-brain" "cmi-esc" "cmi-mbc" "cmi-mpc" "CMI-OSTEO" "cmi-pancan" "cmi-lms")}}
     {{if eq $environment "pepper-cmi-dev"}}
-        DDP_ENV['auth0Domain'] = "login-dev.joincountmein.org";
-        DDP_ENV['auth0Audience'] = "ddp-dev.auth0.com";
+        DDP_ENV['auth0Domain'] = "cmi-dev.us.auth0.com";
+        DDP_ENV['auth0Audience'] = "cmi-dev.us.auth0.com";
         DDP_ENV['basePepperUrl'] = "https://pepper-backend-dot-pepper-cmi-dev.uc.r.appspot.com/";
         {{if eq $study_guid "cmi-mbc"}}
             DDP_ENV['languageHostNames'] = [{languageCode: 'es', hostName: 'mbc-dot-pepper-cmi-dev.uc.r.appspot.com/'}];
