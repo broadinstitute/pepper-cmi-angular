@@ -6,6 +6,6 @@ import { Injectable } from '@angular/core';
 export class ConfigurationService {
   readonly defaultLanguageCode = 'en';
 
-  // aaaaaa
+  // aaaaaaa
   constructor() { }
 }
