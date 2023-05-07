@@ -19,18 +19,6 @@
       "path": "./projects/toolkit/tsconfig.spec.json"
     },
     {
-      "path": "./projects/toolkit-prion/tsconfig.lib.json"
-    },
-    {
-      "path": "./projects/toolkit-prion/tsconfig.spec.json"
-    },
-    {
-      "path": "./projects/ddp-basil/tsconfig.app.json"
-    },
-    {
-      "path": "./projects/ddp-basil/tsconfig.spec.json"
-    },
-    {
       "path": "./projects/ddp-angio/tsconfig.app.json"
     },
     {
@@ -41,24 +29,6 @@
     },
     {
       "path": "./projects/ddp-brain/tsconfig.spec.json"
-    },
-    {
-      "path": "./projects/ddp-rgp/tsconfig.app.json"
-    },
-    {
-      "path": "./projects/ddp-rgp/tsconfig.spec.json"
-    },
-    {
-      "path": "./projects/ddp-atcp/tsconfig.app.json"
-    },
-    {
-      "path": "./projects/ddp-atcp/tsconfig.spec.json"
-    },
-    {
-      "path": "./projects/ddp-rarex/tsconfig.app.json"
-    },
-    {
-      "path": "./projects/ddp-rarex/tsconfig.spec.json"
     },
     {
       "path": "./projects/ddp-mpc/tsconfig.app.json"
@@ -73,34 +43,10 @@
       "path": "./projects/ddp-mbc/tsconfig.spec.json"
     },
     {
-      "path": "./projects/sandbox-app/tsconfig.app.json"
-    },
-    {
-      "path": "./projects/sandbox-app/tsconfig.spec.json"
-    },
-    {
-      "path": "./projects/basil-app/tsconfig.app.json"
-    },
-    {
-      "path": "./projects/basil-app/tsconfig.spec.json"
-    },
-    {
       "path": "./projects/ddp-osteo/tsconfig.app.json"
     },
     {
       "path": "./projects/ddp-osteo/tsconfig.spec.json"
-    },
-    {
-      "path": "./projects/ddp-prion/tsconfig.app.json"
-    },
-    {
-      "path": "./projects/ddp-prion/tsconfig.spec.json"
-    },
-    {
-      "path": "./projects/ddp-testboston/tsconfig.app.json"
-    },
-    {
-      "path": "./projects/ddp-testboston/tsconfig.spec.json"
     },
     {
       "path": "./projects/ddp-esc/tsconfig.app.json"
@@ -109,28 +55,10 @@
       "path": "./projects/ddp-esc/tsconfig.spec.json"
     },
     {
-      "path": "./projects/ddp-cgc/tsconfig.app.json"
-    },
-    {
-      "path": "./projects/ddp-cgc/tsconfig.spec.json"
-    },
-    {
-      "path": "./projects/ddp-circadia/tsconfig.app.json"
-    },
-    {
-      "path": "./projects/ddp-circadia/tsconfig.spec.json"
-    },
-    {
       "path": "./projects/ddp-pancan/tsconfig.app.json"
     },
     {
       "path": "./projects/ddp-pancan/tsconfig.spec.json"
-    },
-    {
-      "path": "./projects/ddp-singular/tsconfig.spec.json"
-    },
-    {
-      "path": "./projects/ddp-brugada/tsconfig.spec.json"
     },
     {
       "path": "./projects/ddp-lms/tsconfig.app.json"
@@ -150,11 +78,5 @@
     {
       "path": "./projects/study-builder-ui/tsconfig.spec.json"
     },
-    {
-      "path": "./projects/ddp-fon/tsconfig.app.json"
-    },
-    {
-      "path": "./projects/ddp-fon/tsconfig.spec.json"
-    }
   ]
 }
