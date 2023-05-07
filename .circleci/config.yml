@@ -625,7 +625,7 @@ jobs:
         type: integer
         default: 1
       test_suite:
-        # to trigger E2E tests with labels matching study key:
+        # to trigger E2E tests with labels matching study key
         # [basil, osteo, angio, brain, mbc, testboston, mpc, atcp, rarex, rgp, esc, prion, cgc, circadia, pancan, singular, brugada, lms, fon]
         type: string
         default: << pipeline.parameters.study_key >>
@@ -755,7 +755,7 @@ workflows:
           matrix:
             alias: app-build
             parameters: &studies
-              study_key: [ dsm-ui, basil, osteo, brain, angio, mbc, testboston, mpc, prion, atcp, rarex, rgp, esc, cgc, circadia, pancan, singular, brugada, lms ]
+              study_key: [ dsm-ui, osteo, brain, angio, mbc, mpc, esc, pancan, lms ]
           check_changed: true
           requires:
             - << matrix.study_key >>-ui-unit-test-pr

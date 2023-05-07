@@ -2,7 +2,7 @@
 
 mkdir -p playwright-env
 
-export PLAYWRIGHT_VAULT_PATH=secret/${VAULT_PATH}/test/e2e
+export PLAYWRIGHT_VAULT_PATH=secret/${VAULT_PATH}/test/e2e # set base path for all playwright secrets
 export sitePwd=$(vault read --format=json $PLAYWRIGHT_VAULT_PATH | jq -r ".data.sitePassword")
 echo "export SITE_PASSWORD=$sitePwd" >> playwright-env/envvars
 
