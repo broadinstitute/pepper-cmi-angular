@@ -471,8 +471,6 @@ jobs:
       - checkout:
           path: *repo_path
       - conditionally-launch-build-and-store:
-          study_key: basil
-      - conditionally-launch-build-and-store:
           study_key: osteo
       - conditionally-launch-build-and-store:
           study_key: brain
@@ -481,33 +479,13 @@ jobs:
       - conditionally-launch-build-and-store:
           study_key: mbc
       - conditionally-launch-build-and-store:
-          study_key: testboston
-      - conditionally-launch-build-and-store:
           study_key: mpc
-      - conditionally-launch-build-and-store:
-          study_key: atcp
-      - conditionally-launch-build-and-store:
-          study_key: rarex
-      - conditionally-launch-build-and-store:
-          study_key: rgp
       - conditionally-launch-build-and-store:
           study_key: esc
       - conditionally-launch-build-and-store:
-          study_key: prion
-      - conditionally-launch-build-and-store:
-          study_key: cgc
-      - conditionally-launch-build-and-store:
-          study_key: circadia
-      - conditionally-launch-build-and-store:
           study_key: pancan
       - conditionally-launch-build-and-store:
-          study_key: singular
-      - conditionally-launch-build-and-store:
-          study_key: brugada
-      - conditionally-launch-build-and-store:
           study_key: lms
-      - conditionally-launch-build-and-store:
-          study_key: fon
 
   app-build:
     description: Run build and store build artifacts to Google cloud storage
